@@ -1,0 +1,22 @@
+{
+  "name": "alysia-bot",
+  "version": "1.0.0",
+  "description": "discord bot for alysia roleplay server",
+  "license": "ISC",
+  "author": "ZeroDay",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "axios": "^1.8.4",
+    "discord.js": "^14.18.0",
+    "dotenv": "^16.4.7",
+    "mysql2": "^3.14.0",
+    "node-fetch": "^3.3.2",
+    "node-steam-openid": "^2.0.0",
+    "steam-lightweight-openid": "^1.1.0",
+    "steamauth": "^0.1.5"
+  }
+}

@@ -1,7 +1,7 @@
 
 # Alysia Tanoa Discord Bot
 
-Alysia Tanoa Discord Bot is a custom bot developed for the AlysiaRP Arma 3 server.
+Alysia Tanoa Discord Bot is a custom bot developed for the Alysia Tanoa Arma 3 server.
 
 ![Logo](https://github.com/Spectral-Engine/Alysia-Bot/blob/main/alysia_banner.png)
 

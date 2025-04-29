@@ -55,21 +55,25 @@ client.on("interactionCreate", async (interaction) => {
     {
         logWithTimestamp(`📥 Commande reçue: ${interaction.commandName}`);
         
-        if (interaction.commandName === "broadcast") {
-            if (!interaction.guild || !interaction.member) {
-                await interaction.reply({ content: "❌ Cette commande doit être utilisée dans un serveur.", ephemeral: true });
+        if (interaction.commandName === "broadcast") 
+        {
+            if (!interaction.guild || !interaction.member) 
+            {
+                await interaction.reply({ content: "❌ Cette commande doit être utilisée dans un serveur.", flags: 64 });
                 return;
             }
         
             const adminRole = interaction.guild.roles.cache.find(role => role.name === "Admin");
         
-            if (!adminRole) {
-                await interaction.reply({ content: "❌ Le rôle Admin n'existe pas sur ce serveur.", ephemeral: true });
+            if (!adminRole) 
+            {
+                await interaction.reply({ content: "❌ Le rôle Admin n'existe pas sur ce serveur.", flags: 64 });
                 return;
             }
         
-            if (!interaction.member.roles.cache.has(adminRole.id)) {
-                await interaction.reply({ content: "❌ Vous n'avez pas la permission d'utiliser cette commande.", ephemeral: true });
+            if (!interaction.member.roles.cache.has(adminRole.id)) 
+            {
+                await interaction.reply({ content: "❌ Vous n'avez pas la permission d'utiliser cette commande.", flags: 64 });
                 return;
             }
         
@@ -77,37 +81,48 @@ client.on("interactionCreate", async (interaction) => {
             const messageContent = interaction.options.getString("message");
             const formattedMessage = messageContent.replace(/\\n/g, '\n');
         
-            const embed = new EmbedBuilder()
-                .setTitle(title)
-                .setDescription(formattedMessage)
-                .setColor("#dc1f1f");
+            const embed = new EmbedBuilder().setTitle(title).setDescription(formattedMessage).setColor("#dc1f1f");
         
             const members = await interaction.guild.members.fetch();
             let successCount = 0;
-        
-            for (const member of members.values()) {
-                if (!member.user.bot) {
-                    try {
+            let failedMembers = [];
+
+            for (const member of members.values()) 
+            {
+                if (!member.user.bot) 
+                {
+                    try 
+                    {
                         await member.send({ embeds: [embed] });
                         successCount++;
-                    } catch (err) {
-                        console.error(`Impossible d'envoyer un message à ${member.user.tag}:`, err);
+                    } 
+                    catch (err) 
+                    {
+                        if (err.code === 50007) 
+                        {
+                            console.warn(`❌ ${member.user.tag} a bloqué les DMs ou désactivé les messages privés.`);
+                        } 
+                        else 
+                        {
+                            console.error(`Erreur inattendue lors de l'envoi à ${member.user.tag}:`, err);
+                        }
+                        failedMembers.push(member.user.tag);
                     }
                 }
             }
-        
             console.log(`✅ Message envoyé avec succès à ${successCount} membre(s).`);
-        
-            await interaction.reply({ content: `✅ Message envoyé à ${successCount} membre(s).`, ephemeral: true });
+            if (failedMembers.length > 0) 
+            {
+                console.log(`❌ Échec de l'envoi pour les membres suivants : ${failedMembers.join(", ")}`);
+            }
+            await interaction.reply({content: `✅ Message envoyé à ${successCount} membre(s).\n❌ Échec de l'envoi pour ${failedMembers.length} membre(s) : ${failedMembers.join(", ")}`, flags: 64});
         }
         
         if (interaction.commandName === "leaderboard") 
         {
-            if (!interaction.inGuild()) {
-                await interaction.reply({
-                    content: "❌ Cette commande doit être utilisée dans un serveur.",
-                    ephemeral: true,
-                });
+            if (!interaction.inGuild()) 
+            {
+                await interaction.reply({content: "❌ Cette commande doit être utilisée dans un serveur.", flags: 64});
                 return;
             }
             const display_name = interaction.member.displayName;
@@ -123,11 +138,9 @@ client.on("interactionCreate", async (interaction) => {
         } 
         if (interaction.commandName === "auth") 
         {
-            if (!interaction.inGuild()) {
-                await interaction.reply({
-                    content: "❌ Cette commande doit être utilisée dans un serveur.",
-                    ephemeral: true,
-                });
+            if (!interaction.inGuild()) 
+            {
+                await interaction.reply({content: "❌ Cette commande doit être utilisée dans un serveur.", flags: 64});
                 return;
             }
             const displayName = interaction.member.displayName;
@@ -137,15 +150,13 @@ client.on("interactionCreate", async (interaction) => {
             const embed = new EmbedBuilder().setTitle("Synchronisation avec Steam...").setDescription("Cliquez sur le bouton ci-dessous pour lier votre compte Steam.").setColor("#dc1f1f");
             const button = new ButtonBuilder().setLabel("Lier mon compte").setStyle(ButtonStyle.Link).setURL(linkURL);     
             const row = new ActionRowBuilder().addComponents(button);
-            await interaction.reply({embeds: [embed], components: [row], ephemeral: true});
+            await interaction.reply({embeds: [embed], components: [row], flags: 64});
         }
         if (interaction.commandName === "bank") 
         {
-            if (!interaction.inGuild()) {
-                await interaction.reply({
-                    content: "❌ Cette commande doit être utilisée dans un serveur.",
-                    ephemeral: true,
-                });
+            if (!interaction.inGuild()) 
+            {
+                await interaction.reply({content: "❌ Cette commande doit être utilisée dans un serveur.", flags: 64});
                 return;
             }
             const display_name = interaction.member.displayName;
@@ -161,19 +172,14 @@ client.on("interactionCreate", async (interaction) => {
         }
         if (interaction.commandName === "level") 
         { 
-            if (!interaction.inGuild()) {
-                await interaction.reply({
-                    content: "❌ Cette commande doit être utilisée dans un serveur.",
-                    ephemeral: true,
-                });
+            if (!interaction.inGuild()) 
+            {
+                await interaction.reply({content: "❌ Cette commande doit être utilisée dans un serveur.", flags: 64});
                 return;
             }
             const display_name = interaction.member.displayName;
             const { xp, level, xpForNextLevel } = getXp(interaction.user.id);
-            await interaction.reply({
-                content: `**${display_name}**, vous êtes au niveau **${level}** avec **${xp} XP**. Il vous reste **${xpForNextLevel} XP** pour atteindre le niveau suivant.`,
-                ephemeral: true,
-            });
+            await interaction.reply({content: `**${display_name}**, vous êtes au niveau **${level}** avec **${xp} XP**. Il vous reste **${xpForNextLevel} XP** pour atteindre le niveau suivant.`, flags: 64});
         }
     }
 
@@ -200,24 +206,24 @@ client.on("interactionCreate", async (interaction) => {
                     if (result.success) 
                     {
                         logWithTimestamp(`✅ ${discordName} | ${result.bank_value_transferred}€ a été transféré.`, ActorType.USER);
-                        await interaction.reply({ content: `Votre virement de **${result.bank_value_transferred}€** a été effectué avec succès.`, ephemeral: true });
+                        await interaction.reply({ content: `Votre virement de **${result.bank_value_transferred}€** a été effectué avec succès.`, flags: 64 });
                     }
                     else 
                     {
                         logWithTimestamp(`❌ ${discordName} | ${result.message || 'Erreur inconnue'}`, ActorType.USER);
-                        await interaction.reply({ content: `${result.message || 'Erreur inconnue'}`, ephemeral: true });
+                        await interaction.reply({ content: `${result.message || 'Erreur inconnue'}`, flags: 64 });
                     }
                 } 
                 else 
                 {
                     logWithTimestamp(`❌ ${discordName} | La réponse du serveur est invalide.`, ActorType.USER);
-                    await interaction.reply({ content: 'La réponse du serveur est invalide.', ephemeral: true });
+                    await interaction.reply({ content: 'La réponse du serveur est invalide.', flags: 64 });
                 }
             } 
             catch (error) 
             {
                 logWithTimestamp(`❌ ${discordName} | Une erreur est survenue lors du virement.`, ActorType.USER);
-                await interaction.reply({ content: 'Une erreur est survenue lors du virement.', ephemeral: true });
+                await interaction.reply({ content: 'Une erreur est survenue lors du virement.', flags: 64 });
             }
         }
     }

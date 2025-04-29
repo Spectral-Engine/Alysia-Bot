@@ -24,7 +24,7 @@ async function handleLeaderboardCommand(interaction)
     catch (error) 
     {
         logWithTimestamp(`❌ Erreur lors de la récupération du leaderboard : ${error.response ? error.response.data : error.message}`);
-        await interaction.reply({ content: "❌ Une erreur est survenue lors de la récupération du leaderboard.", ephemeral: true });
+        await interaction.reply({ content: "❌ Une erreur est survenue lors de la récupération du leaderboard.", flags: 64 });
     }
 }
 
@@ -101,7 +101,7 @@ async function handleBankCommand(interaction)
         const user = playersData.find(player => cleanString(player.discord_rp_name) === cleanString(interaction.member.displayName));
         if (!user || user.vote_value === 0) 
         {
-            await interaction.reply({ content: "Vous n'avez pas encore voté, aucun argent ne vous a été versé.", flags: { ephemeral: true } });
+            await interaction.reply({ content: "Vous n'avez pas encore voté, aucun argent ne vous a été versé.", flags: { flags: 64 } });
             logWithTimestamp(`ℹ️ ${interaction.user.username} n'a pas de votes.`);
             return;
         }
@@ -110,13 +110,13 @@ async function handleBankCommand(interaction)
         const virementButton = new ButtonBuilder().setCustomId('virement').setLabel('Virement').setStyle(ButtonStyle.Secondary);
         const row = new ActionRowBuilder().addComponents(virementButton);
 
-        await interaction.reply({ embeds: [bankEmbed], components: [row], ephemeral: true });
+        await interaction.reply({ embeds: [bankEmbed], components: [row], flags: 64 });
         logWithTimestamp("✅ Informations bancaires envoyées avec succès.");
     } 
     catch (error) 
     {
         logWithTimestamp(`❌ ${interaction.member.displayName} | Erreur lors de la récupération des informations bancaires : ${error.response ? error.response.data : error.message}`);
-        await interaction.reply({ content: "❌ Assurez-vous de lier votre compte Steam en utilisant la commande `/auth`. Si vous venez de le faire, patientez un instant avant de réessayer.", ephemeral: true });
+        await interaction.reply({ content: "❌ Assurez-vous de lier votre compte Steam en utilisant la commande `/auth`. Si vous venez de le faire, patientez un instant avant de réessayer.", flags: 64 });
 
     }
 }
